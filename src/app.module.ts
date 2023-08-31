@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common';
+import { ExtractBiddingModule } from './modules/extract-bidding.module';
 
 @Module({
-  imports: [],
+  imports: [ExtractBiddingModule],
   controllers: [],
   providers: [],
 })
