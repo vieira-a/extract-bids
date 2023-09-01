@@ -1,21 +1,30 @@
-import { ExtractRunnerService } from './extract-runner';
+import { MongoDbConfigService } from '../../config/mongodb-config.service';
 import { MongoDbHelper } from '../../infra/db/mongodb/mongodb-helper';
 import { ExtractBiddingApiRepository } from '../../infra/extraction-data/extract-bidding-api.repository';
 import { ExtractBidding } from '../usecases/extract-bidding';
-import { ConfigService } from '@nestjs/config';
+import { ExtractRunnerService } from './extract-runner';
 
 async function runExtraction() {
-  const configService = new ConfigService();
-  const mongoDbHelper = new MongoDbHelper(configService);
+  const mongoDbConfigService = new MongoDbConfigService();
+  const mongoDbHelper = new MongoDbHelper(mongoDbConfigService);
   const extractBiddingApiRepository = new ExtractBiddingApiRepository();
   const extractBidding = new ExtractBidding(extractBiddingApiRepository);
+
+  await mongoDbConfigService.onApplicationBootstrap();
 
   const extractRunnerService = new ExtractRunnerService(
     mongoDbHelper,
     extractBiddingApiRepository,
     extractBidding,
   );
-  await extractRunnerService.extractRunner();
+  try {
+    await extractRunnerService.extractRunner();
+  } catch (error) {
+    console.error('Erro ao executar extração:', error);
+    process.exit(1);
+  } finally {
+    process.exit(0);
+  }
 }
 
 runExtraction();

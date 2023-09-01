@@ -1,65 +1,33 @@
 import { Injectable } from '@nestjs/common';
-// import { MongoDbConfigService } from '../../../main/config/mongodb-config.service';
-import { Db, MongoClient } from 'mongodb';
-import { ConfigService } from '@nestjs/config';
+import { MongoDbConfigService } from '../../../config/mongodb-config.service';
 
 @Injectable()
 export class MongoDbHelper {
-  private client: MongoClient;
+  constructor(private readonly mongoDbConfigService: MongoDbConfigService) {}
 
-  constructor(private configService: ConfigService) {
-    this.client = new MongoClient('mongodb://127.0.0.1:27017/db_bidding');
-  }
-
-  async connect(): Promise<void> {
-    if (!this.client) {
-      await this.client.connect();
-    }
-    console.log('Conectado ao mongodb');
-  }
-
-  async disconnect(): Promise<void> {
-    await this.client.close();
-  }
-
-  async clean(collectionName: string, document: any): Promise<any> {
-    if (!this.client) {
-      await this.connect();
-    }
+  async saveExtractedBidding(document: any) {
     try {
-      const db: Db = this.client.db();
-      const collection = db.collection(collectionName);
-      await collection.deleteMany(document);
-    } catch (error) {
-      console.log('Erro while clean document collection', error);
-    }
-  }
-
-  async saveExtractedBidding(
-    collectionName: string,
-    document: any,
-  ): Promise<any> {
-    if (!this.client) {
-      await this.connect();
-    }
-
-    try {
-      const db: Db = this.client.db();
-      const collection = db.collection(collectionName);
+      const collection = this.mongoDbConfigService
+        .getDatabase()
+        .collection('processes');
 
       const { codigoLicitacao } = document;
 
-      const documentAlreadyExists = collection.findOne({
+      const biddingAlreadyExists = await collection.findOne({
         codigoLicitacao: codigoLicitacao,
       });
 
-      if (!documentAlreadyExists) {
-        await collection.insertOne(document);
-      } else {
+      if (biddingAlreadyExists !== null) {
         await collection.updateOne({ codigoLicitacao }, { $set: document });
+      } else {
+        await collection.insertOne(document);
       }
     } catch (error) {
-      console.log(error);
+      console.error(
+        `Erro ao salvar licitação ${document.codigoLicitacao}`,
+        error,
+      );
+      throw error;
     }
   }
 }

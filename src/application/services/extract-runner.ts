@@ -37,9 +37,10 @@ export class ExtractRunnerService {
         return;
       }
 
-      extractedDataBids.map(async (bidding) => {
-        await this.mongoDbHelper.saveExtractedBidding('processes', bidding);
-      });
+      for (const bidding of extractedDataBids) {
+        // console.log('Salvando licitação:', bidding.codigoLicitacao);
+        await this.mongoDbHelper.saveExtractedBidding(bidding);
+      }
 
       // const codes = extractedDataBids.map((item) => item.codigoLicitacao);
 
