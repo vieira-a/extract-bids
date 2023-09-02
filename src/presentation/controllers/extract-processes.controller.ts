@@ -1,10 +1,12 @@
 import { Controller, Get } from '@nestjs/common';
 import { ExtractBiddingApiRepository } from '../../infra/extraction-data';
+import { MongoDbHelper } from '../../infra/db/mongodb/mongodb-helper';
 
 @Controller('extract')
 export class ExtractController {
   constructor(
     private readonly extractBiddingApiRepository: ExtractBiddingApiRepository,
+    private readonly mongoDbHelper: MongoDbHelper,
   ) {}
 
   @Get()
@@ -16,7 +18,18 @@ export class ExtractController {
     const baseUrl = `https://compras.api.portaldecompraspublicas.com.br/v2/licitacao/processos?tens?filtro=&tipoData=1&dataInicial=${today.toISOString()}&dataFinal=${dataInterval.toISOString()}`;
 
     try {
-      console.log('***Controller: Iniciando extração de processos...');
+      if (await this.mongoDbHelper.isExtractionAlreadyInProgress()) {
+        console.log(
+          '*** Controller: Já existe uma extração de processos em andamento',
+        );
+        return {
+          message: 'Já existe uma extração de processos em andamento',
+        };
+      } else {
+        await this.mongoDbHelper.lockExtraction();
+        console.log('***Controller: Iniciando extração de itens de processos');
+      }
+
       const allExtractedDataBids = [];
 
       while (true) {
@@ -34,7 +47,10 @@ export class ExtractController {
         page++;
       }
 
-      return { message: 'Extração concluída com sucesso' };
+      await this.mongoDbHelper.unLockExtraction();
+      return {
+        message: 'Extração de processos concluída com sucesso',
+      };
     } catch (error) {
       console.error('Erro durante a extração de processos:', error);
       return { error: 'Erro durante a extração de processos' };

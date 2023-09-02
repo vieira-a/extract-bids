@@ -14,14 +14,23 @@ export async function runExtraction() {
 
   await mongoDbConfigService.onApplicationBootstrap();
 
-  const extractRunnerService = new ExtractRunnerService(extractBidding);
+  const extractRunnerService = new ExtractRunnerService(
+    extractBidding,
+    mongoDbHelper,
+  );
   try {
+    if (await mongoDbHelper.isExtractionAlreadyInProgress()) {
+      console.log('Já existe uma extração de processos em andamento');
+    } else {
+      await mongoDbHelper.lockExtraction();
+      console.log('Iniciando extração de processos');
+    }
     await extractRunnerService.extractProcesses();
+    await mongoDbHelper.unLockExtraction();
+    console.log('Extração de processos concluída com sucesso.');
   } catch (error) {
     console.error('Erro ao executar extração:', error);
-    process.exit(1);
-  } finally {
-    process.exit(0);
+    throw error;
   }
 }
 
