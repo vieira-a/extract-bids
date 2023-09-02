@@ -18,14 +18,10 @@ export class ExtractRunnerItemsService {
       code: '',
     };
     console.log(
-      '***Extração de Items: iniciada extração de itens de processos',
+      '***Extração de Items: iniciada a extração de itens de processos',
     );
     try {
       const allProcessCodes = await this.mongoDbHelper.getAllProcessCodes();
-      // console.log(
-      //   '***Extração de Items: códigos dos processos obtidos',
-      //   allProcessCodes,
-      // );
 
       for (const code of allProcessCodes) {
         extractParams.url = `https://compras.api.portaldecompraspublicas.com.br/v2/licitacao/${code}/itens?`;
@@ -35,10 +31,12 @@ export class ExtractRunnerItemsService {
           await this.extractBiddingItems.extractItems(extractParams);
 
         for (const processItem of extractedProcessItems) {
-          console.log(processItem);
-          //await this.mongoDbHelper.saveProcessItems(processItem);
+          await this.mongoDbHelper.saveProcessItems(processItem);
         }
       }
+      console.log(
+        '***Extração de Items: finalizada a extração de itens de processos',
+      );
     } catch (error) {
       console.log(error);
     }
