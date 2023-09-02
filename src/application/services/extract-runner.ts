@@ -1,6 +1,5 @@
 import { ExtractBiddingParams } from '../../domain/usecases';
 import { ExtractBidding } from '../usecases';
-import { ExtractBiddingApiRepository } from '../../infra/extraction-data';
 import { MongoDbHelper } from '../../infra/db/mongodb/mongodb-helper';
 import { Injectable } from '@nestjs/common';
 
@@ -8,7 +7,6 @@ import { Injectable } from '@nestjs/common';
 export class ExtractRunnerService {
   constructor(
     private readonly mongoDbHelper: MongoDbHelper,
-    private readonly extractBiddingApiRepository: ExtractBiddingApiRepository,
     private readonly extractBidding: ExtractBidding,
   ) {}
 
@@ -16,7 +14,7 @@ export class ExtractRunnerService {
     console.log('***Iniciada extração de processos');
     const today = new Date();
     const dataInterval = new Date();
-    dataInterval.setDate(today.getDate() + 1);
+    dataInterval.setDate(today.getDate() + 2);
     let page = 1;
 
     const extractParams: ExtractBiddingParams = {
@@ -26,8 +24,11 @@ export class ExtractRunnerService {
     };
 
     while (true) {
+      console.log('URL', extractParams);
       const extractedDataBids =
         await this.extractBidding.extract(extractParams);
+
+      console.log('Dados', extractedDataBids);
 
       if (extractedDataBids.length === 0) {
         console.log('***Finalizada extração de processos');

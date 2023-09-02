@@ -1,6 +1,5 @@
 import { ExtractBiddingItemsParams } from '../../domain/usecases';
 import { ExtractBiddingItems } from '../usecases';
-import { ExtractBiddingItemsApiRepository } from '../../infra/extraction-data';
 import { MongoDbHelper } from '../../infra/db/mongodb/mongodb-helper';
 import { Injectable } from '@nestjs/common';
 
@@ -8,7 +7,6 @@ import { Injectable } from '@nestjs/common';
 export class ExtractRunnerItemsService {
   constructor(
     private readonly mongoDbHelper: MongoDbHelper,
-    private readonly extractBiddingItemsApiRepository: ExtractBiddingItemsApiRepository,
     private readonly extractBiddingItems: ExtractBiddingItems,
   ) {}
 

@@ -17,7 +17,6 @@ async function runExtractionItems() {
 
   const extractRunnerItemsService = new ExtractRunnerItemsService(
     mongoDbHelper,
-    extractBiddingItemsApiRepository,
     extractBiddingItems,
   );
   try {
