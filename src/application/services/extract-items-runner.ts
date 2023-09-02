@@ -10,7 +10,7 @@ export class ExtractRunnerItemsService {
     private readonly extractBiddingItems: ExtractBiddingItems,
   ) {}
 
-  async extractProcessesItems(): Promise<void> {
+  async extractProcessesItems(): Promise<any> {
     const extractParams: ExtractBiddingItemsParams = {
       url: '',
       code: '',
@@ -20,6 +20,7 @@ export class ExtractRunnerItemsService {
     );
     try {
       const allProcessCodes = await this.mongoDbHelper.getAllProcessCodes();
+      console.log('***Extrator: códigos', allProcessCodes);
 
       for (const code of allProcessCodes) {
         extractParams.url = `https://compras.api.portaldecompraspublicas.com.br/v2/licitacao/${code}/itens?`;
@@ -37,6 +38,7 @@ export class ExtractRunnerItemsService {
       );
     } catch (error) {
       console.log(error);
+      throw error;
     }
   }
 }

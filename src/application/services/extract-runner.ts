@@ -23,26 +23,5 @@ export class ExtractRunnerService {
         return;
       }
     }
-
-    // while (true) {
-    //   console.log('URL', extractParams);
-    //   const extractedDataBids =
-    //     await this.extractBidding.extract(extractParams);
-
-    //   console.log('Dados', extractedDataBids);
-
-    //   if (extractedDataBids.length === 0) {
-    //     console.log('***Finalizada extração de processos');
-    //     return;
-    //   }
-
-    //   for (const bidding of extractedDataBids) {
-    //     await this.mongoDbHelper.saveExtractedBidding(bidding);
-    //   }
-
-    //   page++;
-
-    //   extractParams.url = `https://compras.api.portaldecompraspublicas.com.br/v2/licitacao/processos?tens?filtro=&tipoData=1&dataInicial=2023-08-31T03:00:00.000Z&dataFinal=2023-08-31T03:00:00.000Z&pagina=${page}`;
-    // }
   }
 }

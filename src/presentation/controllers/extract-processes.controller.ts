@@ -3,7 +3,6 @@ import { ExtractBiddingApiRepository } from '../../infra/extraction-data';
 
 @Controller('extract')
 export class ExtractController {
-  mongoDbHelper: any;
   constructor(
     private readonly extractBiddingApiRepository: ExtractBiddingApiRepository,
   ) {}
@@ -17,7 +16,7 @@ export class ExtractController {
     const baseUrl = `https://compras.api.portaldecompraspublicas.com.br/v2/licitacao/processos?tens?filtro=&tipoData=1&dataInicial=${today.toISOString()}&dataFinal=${dataInterval.toISOString()}`;
 
     try {
-      console.log('***CONTROLLER: Iniciando extração de processos...');
+      console.log('***Controller: Iniciando extração de processos...');
       const allExtractedDataBids = [];
 
       while (true) {

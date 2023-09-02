@@ -5,11 +5,14 @@ import { ExtractBiddingItemsRepository } from '../../application/contracts';
 import { ExtractBiddingItemsEntity } from '../../domain/entities';
 import { ExtractBiddingItemsParams } from '../../domain/usecases';
 import { extractBiddingItemMapper } from '../util';
+import { MongoDbHelper } from '../db/mongodb/mongodb-helper';
 
 @Injectable()
 export class ExtractBiddingItemsApiRepository
   implements ExtractBiddingItemsRepository
 {
+  constructor(private readonly mongoDbHelper: MongoDbHelper) {}
+
   async extractItems(
     extractParams: ExtractBiddingItemsParams,
   ): Promise<ExtractBiddingItemsEntity[]> {
@@ -17,12 +20,30 @@ export class ExtractBiddingItemsApiRepository
 
     try {
       const response = await fetch(url);
+
+      if (!response.ok) {
+        throw new Error('Erro ao acessar a API de itens das licitações');
+      }
+
       const extractedBidsItems = await response.json();
 
-      const mappedItems = extractBiddingItemMapper(extractedBidsItems, code);
-      return mappedItems;
+      const biddingItemsDocument = extractBiddingItemMapper(
+        extractedBidsItems,
+        code,
+      );
+
+      // console.log('*** Repository', biddingItemsDocument);
+
+      for (const biddingItem of biddingItemsDocument) {
+        await this.mongoDbHelper.saveProcessItems(biddingItem);
+        console.log(
+          `*** MongoDB: itens do processo ${biddingItem.codigoLicitacao} salvos com sucesso`,
+        );
+      }
+
+      return biddingItemsDocument;
     } catch (error) {
-      return [];
+      console.error('Erro durante a extração e salvamento de dados:', error);
     }
   }
 }

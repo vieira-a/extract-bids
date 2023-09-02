@@ -35,6 +35,4 @@ export function extractBiddingItemMapper(
 
     return normalItems;
   }
-  console.log('Nenhum item encontrado.');
-  return [];
 }

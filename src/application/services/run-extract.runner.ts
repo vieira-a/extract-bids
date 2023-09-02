@@ -4,7 +4,7 @@ import { ExtractBiddingApiRepository } from '../../infra/extraction-data';
 import { ExtractBidding } from '../usecases';
 import { ExtractRunnerService } from './extract-runner';
 
-async function runExtraction() {
+export async function runExtraction() {
   const mongoDbConfigService = new MongoDbConfigService();
   const mongoDbHelper = new MongoDbHelper(mongoDbConfigService);
   const extractBiddingApiRepository = new ExtractBiddingApiRepository(
@@ -25,4 +25,6 @@ async function runExtraction() {
   }
 }
 
-runExtraction();
+if (require.main === module) {
+  runExtraction();
+}

@@ -40,18 +40,22 @@ export class MongoDbHelper {
         .getDatabase()
         .collection('items');
 
-      const { codigoLicitacao } = document;
+      const { codigoLicitacao, codigo } = document;
 
       const itemProcessAlreadyExists = await collection.findOne({
         codigoLicitacao: codigoLicitacao,
+        codigo: codigo,
       });
 
       if (itemProcessAlreadyExists !== null) {
-        await collection.updateOne({ codigoLicitacao }, { $set: document });
+        await collection.updateOne(
+          { codigoLicitacao, codigo },
+          { $set: document },
+        );
       } else {
         await collection.insertOne(document);
         console.log(
-          `*** MongoDB: itens da licitação ${document.codigoLicitacao} salvo com sucesso`,
+          `*** MongoDB: itens da licitação ${document.codigoLicitacao}, código ${document.codigo} salvo com sucesso`,
         );
       }
     } catch (error) {

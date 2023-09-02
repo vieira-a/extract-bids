@@ -2,16 +2,28 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ExtractBiddingModule } from './modules/extract-bidding.module';
 import { MongoDbConfigService } from './config/mongodb-config.service';
-import { ExtractController } from './presentation/controllers/extract-processes.controller';
-import { ExtractRunnerService } from './application/services/extract-runner';
+import {
+  ExtractController,
+  ExtractItemsController,
+} from './presentation/controllers';
+import {
+  ExtractRunnerService,
+  ExtractRunnerItemsService,
+} from './application/services';
 import { MongoDbHelper } from './infra/db/mongodb/mongodb-helper';
-import { ExtractBidding } from './application/usecases';
-import { ExtractBiddingApiRepository } from './infra/extraction-data';
+import { ExtractBidding, ExtractBiddingItems } from './application/usecases';
+import {
+  ExtractBiddingApiRepository,
+  ExtractBiddingItemsApiRepository,
+} from './infra/extraction-data';
 
 @Module({
   imports: [ConfigModule.forRoot(), ExtractBiddingModule],
-  controllers: [ExtractController],
+  controllers: [ExtractController, ExtractItemsController],
   providers: [
+    ExtractBiddingItemsApiRepository,
+    ExtractRunnerItemsService,
+    ExtractBiddingItems,
     ExtractBiddingApiRepository,
     MongoDbHelper,
     ExtractBidding,

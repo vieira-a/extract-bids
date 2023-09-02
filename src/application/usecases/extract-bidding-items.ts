@@ -15,7 +15,7 @@ export class ExtractBiddingItems implements ExtractBiddingItemsUsecase {
   async extractItems(
     extractParams: ExtractBiddingItemsParams,
   ): Promise<ExtractBiddingItemsEntity[]> {
-    const allItems: ExtractBiddingItemsEntity[] =
+    const allItems =
       await this.extractBiddingItemsRepository.extractItems(extractParams);
     return allItems;
   }
