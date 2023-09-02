@@ -10,7 +10,5 @@ export type ExtractBiddingParams = {
 };
 
 export interface ExtractBiddingUsecase {
-  extract: (
-    extractParams: ExtractBiddingParams,
-  ) => Promise<ExtractBiddingEntity[]>;
+  extract: (url: string) => Promise<ExtractBiddingEntity[]>;
 }

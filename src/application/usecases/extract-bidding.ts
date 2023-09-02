@@ -1,7 +1,4 @@
-import {
-  ExtractBiddingParams,
-  ExtractBiddingUsecase,
-} from '../../domain/usecases';
+import { ExtractBiddingUsecase } from '../../domain/usecases';
 import { ExtractBiddingRepository } from '../contracts';
 import { ExtractBiddingEntity } from '../../domain/entities';
 
@@ -12,11 +9,8 @@ export class ExtractBidding implements ExtractBiddingUsecase {
     this.extractBiddingRepository = extractBiddingRepository;
   }
 
-  async extract(
-    extractParams: ExtractBiddingParams,
-  ): Promise<ExtractBiddingEntity[]> {
-    const allBids: ExtractBiddingEntity[] =
-      await this.extractBiddingRepository.extract(extractParams);
+  async extract(url: string): Promise<ExtractBiddingEntity[]> {
+    const allBids = await this.extractBiddingRepository.extract(url);
     return allBids;
   }
 }

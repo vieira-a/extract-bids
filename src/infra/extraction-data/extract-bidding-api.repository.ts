@@ -3,22 +3,35 @@ import fetch from 'node-fetch';
 
 import { ExtractBiddingRepository } from '../../application/contracts';
 import { ExtractBiddingEntity } from '../../domain/entities';
-import { ExtractBiddingParams } from '../../domain/usecases';
 import { extractBiddingMapper } from '../util';
+import { MongoDbHelper } from '../db/mongodb/mongodb-helper';
 
-Injectable();
+@Injectable()
 export class ExtractBiddingApiRepository implements ExtractBiddingRepository {
-  async extract(
-    extractParams: ExtractBiddingParams,
-  ): Promise<ExtractBiddingEntity[]> {
-    const { url } = extractParams;
+  constructor(private readonly mongoDbHelper: MongoDbHelper) {}
 
+  async extract(url: string): Promise<ExtractBiddingEntity[]> {
     try {
       const response = await fetch(url);
+
+      if (!response.ok) {
+        throw new Error('Erro ao acessar a API de licitações');
+      }
+
       const extractedBids = await response.json();
-      return extractBiddingMapper(extractedBids);
+
+      const biddingDocument = extractBiddingMapper(extractedBids);
+
+      for (const bidding of biddingDocument) {
+        await this.mongoDbHelper.saveExtractedBidding(bidding);
+        console.log(
+          `*** MongoDB: processo ${bidding.codigoLicitacao} salvo com sucesso`,
+        );
+      }
+
+      return biddingDocument;
     } catch (error) {
-      console.log(error);
+      console.error('Erro durante a extração e salvamento de dados:', error);
     }
   }
 }

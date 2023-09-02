@@ -7,15 +7,14 @@ import { ExtractRunnerService } from './extract-runner';
 async function runExtraction() {
   const mongoDbConfigService = new MongoDbConfigService();
   const mongoDbHelper = new MongoDbHelper(mongoDbConfigService);
-  const extractBiddingApiRepository = new ExtractBiddingApiRepository();
+  const extractBiddingApiRepository = new ExtractBiddingApiRepository(
+    mongoDbHelper,
+  );
   const extractBidding = new ExtractBidding(extractBiddingApiRepository);
 
   await mongoDbConfigService.onApplicationBootstrap();
 
-  const extractRunnerService = new ExtractRunnerService(
-    mongoDbHelper,
-    extractBidding,
-  );
+  const extractRunnerService = new ExtractRunnerService(extractBidding);
   try {
     await extractRunnerService.extractProcesses();
   } catch (error) {
