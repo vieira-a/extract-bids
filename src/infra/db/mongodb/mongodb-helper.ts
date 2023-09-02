@@ -5,6 +5,37 @@ import { MongoDbConfigService } from '../../../config/mongodb-config.service';
 export class MongoDbHelper {
   constructor(private readonly mongoDbConfigService: MongoDbConfigService) {}
 
+  async isExtractionAlreadyInProgress(): Promise<boolean> {
+    const lockCollection = this.mongoDbConfigService
+      .getDatabase()
+      .collection('lock_extractions');
+
+    const lockStatus = await lockCollection.findOne({ name: 'extraction' });
+
+    return lockStatus && lockStatus.isLocked === true;
+  }
+
+  async lockExtraction(): Promise<void> {
+    const lockColletion = this.mongoDbConfigService
+      .getDatabase()
+      .collection('lock_extractions');
+    await lockColletion.updateOne(
+      { name: 'extraction' },
+      { $set: { isLocked: true } },
+      { upsert: true },
+    );
+  }
+
+  async unLockExtraction(): Promise<void> {
+    const lockColletion = this.mongoDbConfigService
+      .getDatabase()
+      .collection('lock_extractions');
+    await lockColletion.updateOne(
+      { name: 'extraction' },
+      { $set: { isLocked: false } },
+    );
+  }
+
   async saveExtractedBidding(document: any) {
     try {
       const collection = this.mongoDbConfigService
