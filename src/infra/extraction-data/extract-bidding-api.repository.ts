@@ -4,7 +4,7 @@ import fetch from 'node-fetch';
 import { ExtractBiddingRepository } from '../../application/contracts';
 import { ExtractBiddingEntity } from '../../domain/entities';
 import { ExtractBiddingParams } from '../../domain/usecases';
-import { extractBiddingMapper } from '../util/extract-bidding-mapper';
+import { extractBiddingMapper } from '../util';
 
 Injectable();
 export class ExtractBiddingApiRepository implements ExtractBiddingRepository {
