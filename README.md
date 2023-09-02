@@ -80,7 +80,7 @@ Isso permitirá que você visualize detalhes específicos de um processo após a
 
 ## TODO
 - [-] Deve existir uma rota de busca que permita consultar os processos extraídos.  
-  - [ ] Essa rota deve retornar os itens do processo junto com a solicitação
+  - [x] Essa rota deve retornar os itens do processo junto com a solicitação
 - [ ] A rota deve aceitar filtros:
   - [ ] Data de início do processo, 
   - [ ] Número do processo, 

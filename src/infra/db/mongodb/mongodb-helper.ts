@@ -124,14 +124,28 @@ export class MongoDbHelper {
         .getDatabase()
         .collection('processes');
 
-      const allProcesses = await collection
-        .find()
-        .skip((page - 1) * limit)
-        .limit(limit)
-        .toArray();
+      const pipeItems = [
+        {
+          $lookup: {
+            from: 'items',
+            localField: 'codigoLicitacao',
+            foreignField: 'codigoLicitacao',
+            as: 'items',
+          },
+        },
+        {
+          $skip: (page - 1) * limit,
+        },
+        {
+          $limit: limit,
+        },
+      ];
+
+      const allProcesses = await collection.aggregate(pipeItems).toArray();
       return allProcesses;
     } catch (error) {
-      console.log('Erro ao obter processos');
+      console.log('Erro ao obter processos', error);
+      throw error;
     }
   }
 }
