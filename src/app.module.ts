@@ -5,6 +5,7 @@ import { MongoDbConfigService } from './config/mongodb-config.service';
 import {
   ExtractController,
   ExtractItemsController,
+  ProcessesController,
 } from './presentation/controllers';
 import {
   ExtractRunnerService,
@@ -19,7 +20,7 @@ import {
 
 @Module({
   imports: [ConfigModule.forRoot(), ExtractBiddingModule],
-  controllers: [ExtractController, ExtractItemsController],
+  controllers: [ExtractController, ExtractItemsController, ProcessesController],
   providers: [
     ExtractBiddingItemsApiRepository,
     ExtractRunnerItemsService,

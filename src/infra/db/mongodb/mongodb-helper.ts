@@ -117,4 +117,21 @@ export class MongoDbHelper {
       throw error;
     }
   }
+
+  async getAllProcesses(page: number, limit: number) {
+    try {
+      const collection = this.mongoDbConfigService
+        .getDatabase()
+        .collection('processes');
+
+      const allProcesses = await collection
+        .find()
+        .skip((page - 1) * limit)
+        .limit(limit)
+        .toArray();
+      return allProcesses;
+    } catch (error) {
+      console.log('Erro ao obter processos');
+    }
+  }
 }
