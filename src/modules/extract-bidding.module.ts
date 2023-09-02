@@ -1,7 +1,10 @@
 import { Module } from '@nestjs/common';
-import { ExtractBiddingApiRepository } from '../infra/extraction-data/extract-bidding-api.repository';
+import {
+  ExtractBiddingApiRepository,
+  ExtractBiddingItemsApiRepository,
+} from '../infra/extraction-data';
 
 @Module({
-  providers: [ExtractBiddingApiRepository],
+  providers: [ExtractBiddingApiRepository, ExtractBiddingItemsApiRepository],
 })
 export class ExtractBiddingModule {}
