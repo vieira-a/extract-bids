@@ -1,2 +1,2 @@
 export * from './extract-bidding-repository';
-export * from '../../infra/contracts/extract-bidding-api-response';
+export * from './extract-bidding-items-repository';
