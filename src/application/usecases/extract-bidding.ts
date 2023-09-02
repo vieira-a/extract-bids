@@ -1,9 +1,9 @@
 import {
   ExtractBiddingParams,
   ExtractBiddingUsecase,
-} from 'src/domain/usecases';
+} from '../../domain/usecases';
 import { ExtractBiddingRepository } from '../contracts';
-import { ExtractBiddingEntity } from 'src/domain/entities';
+import { ExtractBiddingEntity } from '../../domain/entities';
 
 export class ExtractBidding implements ExtractBiddingUsecase {
   private readonly extractBiddingRepository: ExtractBiddingRepository;
