@@ -27,4 +27,5 @@ export async function runExtraction() {
 
 if (require.main === module) {
   runExtraction();
+  console.log('Rodando extração manual de processos');
 }

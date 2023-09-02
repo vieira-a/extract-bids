@@ -20,21 +20,24 @@ export async function runExtractionItems(): Promise<any> {
   );
 
   await mongoDbConfigService.onApplicationBootstrap();
-  console.log('Iniciando extração de itens...');
 
   try {
-    console.log(
-      'Executando extractRunnerItemsService.extractProcessesItems...',
-    );
+    if (await mongoDbHelper.isExtractionAlreadyInProgress()) {
+      console.log('Já existe uma extração de itens de processos em andamento');
+    } else {
+      await mongoDbHelper.lockExtraction();
+      console.log('Iniciando extração de itens de processos');
+    }
     await extractRunnerItemsService.extractProcessesItems();
+    await mongoDbHelper.unLockExtraction();
     console.log('Extração concluída com sucesso.');
   } catch (error) {
     console.error('Erro ao executar extração:', error);
     throw error;
-    //process.exit(1);
   }
 }
 
 if (require.main === module) {
   runExtractionItems();
+  console.log('Rodando extração manual de itens de processos');
 }

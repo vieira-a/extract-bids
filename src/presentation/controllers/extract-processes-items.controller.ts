@@ -19,7 +19,17 @@ export class ExtractItemsController {
       code: '',
     };
     try {
-      console.log('***Controller: Iniciando extração de itens de processos...');
+      if (await this.mongoDbHelper.isExtractionAlreadyInProgress()) {
+        console.log(
+          '*** Controller: Já existe uma extração de itens de processos em andamento',
+        );
+        return {
+          message: 'Já existe uma extração de itens de processos em andamento',
+        };
+      } else {
+        await this.mongoDbHelper.lockExtraction();
+        console.log('***Controller: Iniciando extração de itens de processos');
+      }
       const allProcessCodes = await this.mongoDbHelper.getAllProcessCodes();
 
       for (const code of allProcessCodes) {
@@ -32,7 +42,10 @@ export class ExtractItemsController {
           console.log('***Controller: extrando itens do processo', processItem);
         }
       }
-      return { message: 'Extração concluída com sucesso' };
+      await this.mongoDbHelper.unLockExtraction();
+      return {
+        message: 'Extração de itens de processos concluída com sucesso',
+      };
     } catch (error) {
       console.error('Erro durante a extração de itens do processo');
       return { error: 'Erro durante a extração de itens de processos' };

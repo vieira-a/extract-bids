@@ -19,6 +19,14 @@ export class ExtractRunnerItemsService {
       '***Extração de Items: iniciada a extração de itens de processos',
     );
     try {
+      if (await this.mongoDbHelper.isExtractionAlreadyInProgress()) {
+        console.log(
+          'Já existe uma extração de itens de processos em andamento',
+        );
+      } else {
+        await this.mongoDbHelper.lockExtraction();
+        console.log('Iniciando extração de itens de processos');
+      }
       const allProcessCodes = await this.mongoDbHelper.getAllProcessCodes();
       console.log('***Extrator: códigos', allProcessCodes);
 
@@ -33,6 +41,7 @@ export class ExtractRunnerItemsService {
           await this.mongoDbHelper.saveProcessItems(processItem);
         }
       }
+      await this.mongoDbHelper.unLockExtraction();
       console.log(
         '***Extração de Items: finalizada a extração de itens de processos',
       );
