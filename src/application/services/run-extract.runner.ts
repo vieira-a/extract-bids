@@ -1,7 +1,7 @@
 import { MongoDbConfigService } from '../../config/mongodb-config.service';
 import { MongoDbHelper } from '../../infra/db/mongodb/mongodb-helper';
-import { ExtractBiddingApiRepository } from '../../infra/extraction-data/extract-bidding-api.repository';
-import { ExtractBidding } from '../usecases/extract-bidding';
+import { ExtractBiddingApiRepository } from '../../infra/extraction-data';
+import { ExtractBidding } from '../usecases';
 import { ExtractRunnerService } from './extract-runner';
 
 async function runExtraction() {
@@ -18,7 +18,7 @@ async function runExtraction() {
     extractBidding,
   );
   try {
-    await extractRunnerService.extractRunner();
+    await extractRunnerService.extractProcesses();
   } catch (error) {
     console.error('Erro ao executar extração:', error);
     process.exit(1);
