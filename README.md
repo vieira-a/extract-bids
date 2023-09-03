@@ -58,9 +58,8 @@ Para executar este projeto localmente, siga estas etapas:
 
 1. **Clone o repositório:**
 ```
-   git clone https://github.com/seu-usuario/seu-projeto.git
-   cd seu-projeto
-
+   git clone https://github.com/vieira-a/extract-bids.git
+   cd extract-bids
 ```
 
 2. Crie um arquivo **.env** na raiz do projeto e defina as variáveis de ambiente necessárias:
