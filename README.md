@@ -188,3 +188,9 @@ Rotas existente:
 - Resposta:
    1. Em caso de sucesso, retorna um objeto contendo a lista de processos de licitação, informações de página e limit, se houverem resultados. Caso contrário, retorna uma mensagem indicando que nenhum processo foi encontrado.
    2. Em caso de erro durante a consulta, retorna uma mensagem de erro.
+
+# Clean Architecture e Princípios SOLID no projeto
+
+Este projeto foi desenvolvido seguindo os princípios da Clean Architecture e os princípios SOLID, que promovem a organização, a manutenibilidade e a escalabilidade do código.
+
+Feito por [Anderson Vieira](https://linkedin/in/vieira-a) como proposta de resolução para um teste técnico.
