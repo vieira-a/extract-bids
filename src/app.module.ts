@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ScheduleModule } from '@nestjs/schedule';
 import { ConfigModule } from '@nestjs/config';
 import { ExtractBiddingModule } from './modules/extract-bidding.module';
 import { MongoDbConfigService } from './config/mongodb-config.service';
@@ -17,9 +18,14 @@ import {
   ExtractBiddingApiRepository,
   ExtractBiddingItemsApiRepository,
 } from './infra/extraction-data';
+import { ExtractSchedule } from './config/extract-schedule';
 
 @Module({
-  imports: [ConfigModule.forRoot(), ExtractBiddingModule],
+  imports: [
+    ScheduleModule.forRoot(),
+    ConfigModule.forRoot(),
+    ExtractBiddingModule,
+  ],
   controllers: [ExtractController, ExtractItemsController, ProcessesController],
   providers: [
     ExtractBiddingItemsApiRepository,
@@ -30,6 +36,7 @@ import {
     ExtractBidding,
     ExtractRunnerService,
     MongoDbConfigService,
+    ExtractSchedule,
   ],
 })
 export class AppModule {}
