@@ -11,8 +11,9 @@ export class ExtractRunnerService {
 
   async extractProcesses(): Promise<void> {
     const today = new Date();
+    const timeToExtraction = 30;
     const dataInterval = new Date();
-    dataInterval.setDate(today.getDate() + 2);
+    dataInterval.setDate(today.getDate() + timeToExtraction);
     let page = 1;
     let url = `https://compras.api.portaldecompraspublicas.com.br/v2/licitacao/processos?tens?filtro=&tipoData=1&dataInicial=${today.toISOString()}&dataFinal=${dataInterval.toISOString()}&pagina=${page}`;
 
