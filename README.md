@@ -79,14 +79,14 @@ Isso permitirá que você visualize detalhes específicos de um processo após a
 - Integração contínua para garantir a estabilidade do sistema ao longo do tempo.
 
 ## TODO
-- [-] Deve existir uma rota de busca que permita consultar os processos extraídos.  
+- [x] Deve existir uma rota de busca que permita consultar os processos extraídos.  
   - [x] Essa rota deve retornar os itens do processo junto com a solicitação
-- [ ] A rota deve aceitar filtros:
-  - [ ] Data de início do processo, 
-  - [ ] Número do processo, 
-  - [ ] Uma busca textual no campo "resumo" 
-  - [ ] Uma busca textual no campo "descrição do item".
-- [ ] A rota deve suportar paginação.
+- [x] A rota deve aceitar filtros:
+  - [x] Data de início do processo, 
+  - [x] Número do processo, 
+  - [x] Uma busca textual no campo "resumo" 
+  - [x] Uma busca textual no campo "descrição do item".
+- [x] A rota deve suportar paginação.
 
 - [ ] A extração deve ocorrer automaticamente quatro vezes por dia
 - [-] Deve-se considerar as diferenças entre cada extração

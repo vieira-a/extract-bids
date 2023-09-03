@@ -118,7 +118,7 @@ export class MongoDbHelper {
     }
   }
 
-  async getAllProcesses(page: number, limit: number) {
+  async getAllProcesses(page: number, limit: number, filters: any) {
     try {
       const collection = this.mongoDbConfigService
         .getDatabase()
@@ -132,6 +132,9 @@ export class MongoDbHelper {
             foreignField: 'codigoLicitacao',
             as: 'items',
           },
+        },
+        {
+          $match: filters,
         },
         {
           $skip: (page - 1) * limit,
