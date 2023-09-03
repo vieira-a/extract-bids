@@ -62,13 +62,10 @@ Para executar este projeto localmente, siga estas etapas:
    cd extract-bids
 ```
 
-2. Crie um arquivo **.env** na raiz do projeto e defina as variáveis de ambiente necessárias:
+2. Arquivo de configuração do banco:
 
 ```
-   DB_HOST=127.0.0.1
-   DB_PORT=27017
-   DB_NAME=db_bidding
-   MONGO_URI=mongodb://127.0.0.1:27017/db_bidding
+   src/config/mongodb-config.service
 ```
 
 3. Instale as dependências
@@ -92,6 +89,13 @@ Isso iniciará uma instância do MongoDB com as configurações especificadas em
    npm start:dev
 ```
 
+6. Intervalo de tempo para extração
+
+Você pode mudar o intervalo de tempo para extração na constante **timeToExtraction**, que encontra-se no arquivo abaixo. Por padrão, está configurado para os próximos 30 dias a contar da data atual.
+```
+   src/application/service/extract-runner.ts
+```
+
 Agora, a aplicação deve estar em execução localmente e conectada à instância do MongoDB configurada. Você pode acessá-la em http://localhost:3000 no seu navegador.
 
 ## Funcionalidades
@@ -110,18 +114,18 @@ Rota existente:
 
 - Descrição: esta rota inicia o processo de extração de dados de processos de licitação.
 - Fluxo de Funcionamento:
-   1. Verifica se uma extração de processos já está em andamento no momento. Se estiver, retorna uma mensagem informando que a extração já está em execução. Caso contrário, bloqueia a extração para evitar que várias extrações ocorram simultaneamente.
-   2. Define um intervalo de datas a serem usadas na consulta à API externa, neste caso, de hoje até dois dias no futuro.
-   3. Constrói a URL da API externa com base no intervalo de datas e em outras configurações.
-   4. Inicia um loop que consulta páginas de dados da API externa até que não haja mais dados a serem extraídos.
-   5. A cada iteração, realiza uma solicitação à API externa usando a instância do extractBiddingApiRepository para extrair os dados da página atual.
-   5. Se não houver mais dados a serem extraídos, o loop é encerrado.
-   6. Os dados extraídos de todas as páginas são consolidados em allExtractedDataBids.
-   7. Após a extração bem-sucedida, o bloqueio de extração é liberado.
+1. Verifica se uma extração de processos já está em andamento no momento. Se estiver, retorna uma mensagem informando que a extração já está em execução. Caso contrário, bloqueia a extração para evitar que várias extrações ocorram simultaneamente.
+2. Define um intervalo de datas a serem usadas na consulta à API externa, neste caso, de hoje até dois dias no futuro.
+3. Constrói a URL da API externa com base no intervalo de datas e em outras configurações.
+4. Inicia um loop que consulta páginas de dados da API externa até que não haja mais dados a serem extraídos.
+5. A cada iteração, realiza uma solicitação à API externa usando a instância do extractBiddingApiRepository para extrair os dados da página atual.
+5. Se não houver mais dados a serem extraídos, o loop é encerrado.
+6. Os dados extraídos de todas as páginas são consolidados em allExtractedDataBids.
+7. Após a extração bem-sucedida, o bloqueio de extração é liberado.
    
 - Resposta:
-   1. Em caso de sucesso, retorna uma mensagem informando que a extração foi concluída com sucesso.
-   2. Em caso de erro durante a extração, retorna uma mensagem de erro.
+1. Em caso de sucesso, retorna uma mensagem informando que a extração foi concluída com sucesso.
+2. Em caso de erro durante a extração, retorna uma mensagem de erro.
 
 ### ExtractItemsController
 
@@ -138,18 +142,18 @@ Rota existente:
 - Descrição: Esta rota inicia o processo de extração de dados de itens de processos de licitação.
 
 - Fluxo de Funcionamento:
-   1. Verifica se uma extração de itens de processos já está em andamento no momento. Se estiver, retorna uma mensagem informando que a extração já está em execução. Caso contrário, bloqueia a extração para evitar que várias extrações ocorram simultaneamente.
-   2. Obtém uma lista de códigos de processos de licitação armazenados no banco de dados MongoDB usando getAllProcessCodes.
-   3. Itera sobre cada código de processo e constrói a URL da API externa para extrair os itens específicos desse processo.
-   4. Para cada processo, solicita à API externa os dados dos itens usando a instância de extractBiddingItemsApiRepository e os parâmetros apropriados.
-   5. Itera sobre os itens extraídos e os salva no banco de dados MongoDB usando saveProcessItems.
-   6. Registra as informações de extração na saída do console.
-   7. Após a extração bem-sucedida de todos os processos, o bloqueio de extração é liberado.
+1. Verifica se uma extração de itens de processos já está em andamento no momento. Se estiver, retorna uma mensagem informando que a extração já está em execução. Caso contrário, bloqueia a extração para evitar que várias extrações ocorram simultaneamente.
+2. Obtém uma lista de códigos de processos de licitação armazenados no banco de dados MongoDB usando getAllProcessCodes.
+3. Itera sobre cada código de processo e constrói a URL da API externa para extrair os itens específicos desse processo.
+4. Para cada processo, solicita à API externa os dados dos itens usando a instância de extractBiddingItemsApiRepository e os parâmetros apropriados.
+5. Itera sobre os itens extraídos e os salva no banco de dados MongoDB usando saveProcessItems.
+6. Registra as informações de extração na saída do console.
+7. Após a extração bem-sucedida de todos os processos, o bloqueio de extração é liberado.
 
 - Resposta:
 
-   1. Em caso de sucesso, retorna uma mensagem informando que a extração foi concluída com sucesso.
-   2. Em caso de erro durante a extração, retorna uma mensagem de erro.
+1. Em caso de sucesso, retorna uma mensagem informando que a extração foi concluída com sucesso.
+2. Em caso de erro durante a extração, retorna uma mensagem de erro.
 
 ### ProcessesController
 
@@ -175,21 +179,28 @@ Rotas existente:
 
 - Fluxo de Funcionamento:
 
-   1. Valida e aplica os parâmetros de consulta, como page e limit, usando o pacote @nestjs/common.
-   2. Constrói um objeto filters que será usado para filtrar os resultados da consulta.
-   3. Se inicio estiver presente, adiciona um filtro para buscar processos com dataHoraInicioLances maior ou igual à data especificada.
-   4. Se numero estiver presente, adiciona um filtro para buscar processos com um número correspondente.
-   5. Se resumo estiver presente, adiciona um filtro de pesquisa para buscar processos com resumos correspondentes (case-insensitive).
-   6. Se itemDescricao estiver presente, adiciona um filtro de pesquisa para buscar processos com descrições de itens correspondentes (case-insensitive).
-   7. Obtém uma lista de processos de licitação que correspondem aos filtros e à paginação usando getAllProcesses do mongoDbHelper.
-   8. Retorna a lista de processos de licitação encontrados, juntamente com informações de paginação, se aplicável.
+1. Valida e aplica os parâmetros de consulta, como page e limit, usando o pacote @nestjs/common.
+2. Constrói um objeto filters que será usado para filtrar os resultados da consulta.
+3. Se inicio estiver presente, adiciona um filtro para buscar processos com dataHoraInicioLances maior ou igual à data especificada.
+4. Se numero estiver presente, adiciona um filtro para buscar processos com um número correspondente.
+5. Se resumo estiver presente, adiciona um filtro de pesquisa para buscar processos com resumos correspondentes (case-insensitive).
+6. Se itemDescricao estiver presente, adiciona um filtro de pesquisa para buscar processos com descrições de itens correspondentes (case-insensitive).
+7. Obtém uma lista de processos de licitação que correspondem aos filtros e à paginação usando getAllProcesses do mongoDbHelper.
+8. Retorna a lista de processos de licitação encontrados, juntamente com informações de paginação, se aplicável.
 
 - Resposta:
-   1. Em caso de sucesso, retorna um objeto contendo a lista de processos de licitação, informações de página e limit, se houverem resultados. Caso contrário, retorna uma mensagem indicando que nenhum processo foi encontrado.
-   2. Em caso de erro durante a consulta, retorna uma mensagem de erro.
+1. Em caso de sucesso, retorna um objeto contendo a lista de processos de licitação, informações de página e limit, se houverem resultados. Caso contrário, retorna uma mensagem indicando que nenhum processo foi encontrado.
+2. Em caso de erro durante a consulta, retorna uma mensagem de erro.
 
-# Clean Architecture e Princípios SOLID no projeto
+## Notas sobre os processos de extração
 
-Este projeto foi desenvolvido seguindo os princípios da Clean Architecture e os princípios SOLID, que promovem a organização, a manutenibilidade e a escalabilidade do código.
+1. Optei por configurar dois serviços distintos, em duas rotas distintas, por questões de organização e separação de responsabilidades. 
+2. A extração de processos é sempre realizada primeiro; em seguida é realizada a extração dos itens que compõem os processos.
+3. Ao salvar os processos e itens extraídos, os serviços levam em consideração os dados mais recentes, atualizando devidamente os itens.
+4. A cada processo de extração, o sistema exclui automaticamente os itens do dia anterior, mantendo uma base atualizada do dia atual até os 30 dias seguintes.
+
+## Sobre a utilização dos princípios de Clean Architecture e SOLID no projeto
+
+Este projeto foi desenvolvido seguindo os princípios da Clean Architecture e os princípios SOLID, porque que promovem a organização, a manutenibilidade e a escalabilidade do código.
 
 Feito por [Anderson Vieira](https://linkedin/in/vieira-a) como proposta de resolução para um teste técnico.
