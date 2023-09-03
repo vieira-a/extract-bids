@@ -4,7 +4,7 @@ import { runExtraction, runExtractionItems } from '../application/services';
 
 @Injectable()
 export class ExtractSchedule {
-  @Cron(CronExpression.EVERY_4_HOURS)
+  @Cron(CronExpression.EVERY_6_HOURS)
   async start() {
     try {
       console.log('***Agendamento: iniciando extração automática');
