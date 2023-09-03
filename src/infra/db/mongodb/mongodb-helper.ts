@@ -56,6 +56,14 @@ export class MongoDbHelper {
         dataHoraInicioLances: { $lt: limitDate },
       });
 
+      const itemsCollection = this.mongoDbConfigService
+        .getDatabase()
+        .collection('items');
+
+      await itemsCollection.deleteMany({
+        codigoLicitacao: codigoLicitacao,
+      });
+
       if (biddingAlreadyExists !== null) {
         await collection.updateOne({ codigoLicitacao }, { $set: document });
       } else {
