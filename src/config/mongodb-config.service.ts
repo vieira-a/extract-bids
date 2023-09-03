@@ -12,9 +12,6 @@ export class MongoDbConfigService implements OnApplicationBootstrap {
 
       await this.client.connect();
       this.db = this.client.db('db_bidding');
-      console.log(
-        `MongoDB is running at localhost:27017/${this.db.databaseName}`,
-      );
     } catch (error) {
       console.error('Erro ao conectar ao MongoDB:', error);
       throw error;
