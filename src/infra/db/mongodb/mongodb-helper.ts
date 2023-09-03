@@ -44,8 +44,16 @@ export class MongoDbHelper {
 
       const { codigoLicitacao } = document;
 
+      const limitDate = new Date();
+      limitDate.setHours(limitDate.getHours() - 24);
+
       const biddingAlreadyExists = await collection.findOne({
         codigoLicitacao: codigoLicitacao,
+      });
+
+      await collection.deleteMany({
+        codigoLicitacao: codigoLicitacao,
+        dataHoraInicioLances: { $lt: limitDate },
       });
 
       if (biddingAlreadyExists !== null) {
